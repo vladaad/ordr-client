@@ -17,7 +17,6 @@ module.exports = settingsGenerator = async (type) => {
             fs.mkdirSync('files/danser/Skins')
             fs.mkdirSync('files/danser/rawReplays')
             fs.mkdirSync('files/danser/videos')
-            console.log(path.resolve("files/danser/Songs"))
             config.danserSongsDir = path.resolve("files/danser/Songs")
             config.danserSkinsDir = path.resolve("files/danser/Skins")
             config.rawReplaysPath = path.resolve("files/danser/rawReplays")
@@ -33,6 +32,19 @@ module.exports = settingsGenerator = async (type) => {
             })
         }, 1000)
     } else if (type === "change") {
+        if (config.usingOsuApi) {
+            if (!fs.existsSync('files/danser/api.txt')) {
+                fs.writeFileSync('files/danser/api.txt', config.osuApiKey, 'utf-8', (err) => {
+                    if (err) throw err
+                })
+            }
+            const currentApi = fs.readFileSync('files/danser/api.txt', 'utf-8')
+            if (currentApi !== config.osuApiKey) {
+                fs.writeFileSync('files/danser/api.txt', config.osuApiKey, 'utf-8', (err) => {
+                    if (err) throw err
+                })
+            }
+        }
         if (fs.existsSync(config.settingsPath)) {
             await fs.promises.unlink(config.settingsPath, (err) => {
                 if (err) throw err
